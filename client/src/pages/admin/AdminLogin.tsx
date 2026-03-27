@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Lock, ArrowRight, Eye, EyeOff, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const loginSchema = z.object({
   username: z.string().min(1, "اسم المستخدم مطلوب"),
@@ -23,6 +24,7 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showWarning, setShowWarning] = useState(true);
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -58,8 +60,49 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-background relative">
-      <Button 
+    <div className="min-h-screen flex items-center justify-center px-6 bg-background relative overflow-hidden">
+      <AnimatePresence>
+        {showWarning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="max-w-md w-full glass-panel p-8 rounded-3xl text-center border-destructive/20 shadow-[-10px_0_40px_rgba(255,0,0,0.1),10px_0_40px_rgba(255,0,0,0.1)]"
+            >
+              <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
+                <ShieldAlert className="w-10 h-10 text-destructive animate-pulse" />
+              </div>
+              <h2 className="text-2xl font-black text-white mb-4">تحذير أمني</h2>
+              <p className="text-muted-foreground mb-8 text-lg">
+                هذه الصفحة مخصصة لمالك الموقع فقط. محاولة الدخول غير المصرح بها مسجلة.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button 
+                  onClick={() => setShowWarning(false)}
+                  className="w-full bg-primary hover:bg-primary/90 text-white-keep rounded-xl py-6 font-bold text-lg"
+                >
+                  أنا المالك - متابعة
+                </Button>
+                <Button 
+                  variant="ghost"
+                  onClick={() => navigate("/")}
+                  className="w-full text-muted-foreground hover:text-white"
+                >
+                  العودة للرئيسية
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <Button  
         variant="ghost" 
         className="absolute top-6 right-6 text-muted-foreground hover:text-white"
         onClick={() => navigate("/")}
@@ -70,7 +113,7 @@ export default function AdminLogin() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white" />
+            <Lock className="w-8 h-8 text-white-keep" />
           </div>
           <h1 className="text-2xl font-black text-white">لوحة التحكم</h1>
           <p className="text-muted-foreground mt-2">تسجيل الدخول للإدارة</p>
@@ -120,7 +163,7 @@ export default function AdminLogin() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-6 font-bold">
+              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white-keep rounded-xl py-6 font-bold text-lg">
                 {loading ? "جاري الدخول..." : "تسجيل الدخول"}
               </Button>
             </form>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Settings } from "lucide-react";
+import { Menu, X, Settings, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSection } from "@/hooks/useContent";
 
@@ -11,13 +11,27 @@ export function Navbar() {
   const brand = useSection("brand", defaultBrand as any);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [location] = useLocation();
 
   useEffect(() => {
+    // Initialize theme based on document class
+    setIsDark(document.documentElement.classList.contains("dark"));
+    
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    if (newTheme) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
 
   const isHome = location === "/";
 
@@ -66,9 +80,17 @@ export function Navbar() {
           </Button>
         </nav>
 
-        <Link href="/admin" className="text-sm font-semibold text-white/70 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/10 md:mr-4">
+        <Link href="/admin" className="text-sm font-semibold text-white/70 hover:text-white-keep bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/10 md:mr-4">
           لوحة التحكم
         </Link>
+        
+        <button 
+          onClick={toggleTheme}
+          className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-white-keep focus:outline-none transition-colors"
+          aria-label="تبديل المظهر"
+        >
+          {isDark ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
 
         {/* Mobile menu toggle */}
         <button className="md:hidden text-white mr-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>

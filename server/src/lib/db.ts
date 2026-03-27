@@ -5,8 +5,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dbPath = process.env.DATABASE_URL || "file:" + path.join(process.cwd(), "sqlite.db");
 const client = createClient({
-  url: "file:" + path.join(__dirname, "..", "..", "sqlite.db")
+  url: dbPath
 });
 
 export const db = drizzle(client, { schema });
