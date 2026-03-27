@@ -1,0 +1,102 @@
+import { Router } from "express";
+import { z } from "zod";
+import { db } from "../lib/db.js";
+import { siteContent } from "../schema/index.js";
+import { requireAuth } from "../lib/auth.js";
+import { eq } from "drizzle-orm";
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.join(__dirname, "..", "..", "uploads");
+
+const router = Router();
+
+router.get("/all", requireAuth, async (_req, res) => {
+  try {
+    const rows = await db.select().from(siteContent);
+    const result: Record<string, Record<string, string>> = {};
+    for (const row of rows) {
+      try {
+        result[row.section] = JSON.parse(row.content);
+      } catch {
+        result[row.section] = {};
+      }
+    }
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "خطأ في الخادم" });
+  }
+});
+
+router.get("/images", (_req, res) => {
+  try {
+    if (!fs.existsSync(uploadsDir)) {
+      res.json([]);
+      return;
+    }
+    const files = fs.readdirSync(uploadsDir)
+      .filter((f) => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+      .map((f) => `/uploads/${f}`);
+    res.json(files);
+  } catch {
+    res.json([]);
+  }
+});
+
+router.get("/:section", async (req, res) => {
+  try {
+    const [row] = await db
+      .select()
+      .from(siteContent)
+      .where(eq(siteContent.section, req.params.section as string));
+    if (!row) {
+      res.json({});
+      return;
+    }
+    try {
+      res.json(JSON.parse(row.content));
+    } catch {
+      res.json({});
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "خطأ في الخادم" });
+  }
+});
+
+const updateSchema = z.object({ content: z.string() });
+
+router.put("/:section", requireAuth, async (req, res) => {
+  try {
+    const { content } = updateSchema.parse(req.body);
+    const section = req.params.section as string;
+
+    const [existing] = await db
+      .select()
+      .from(siteContent)
+      .where(eq(siteContent.section, section));
+
+    if (existing) {
+      await db
+        .update(siteContent)
+        .set({ content, updatedAt: new Date() })
+        .where(eq(siteContent.section, section));
+    } else {
+      await db.insert(siteContent).values({ section, content });
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      res.status(400).json({ message: "بيانات غير صالحة" });
+      return;
+    }
+    console.error(err);
+    res.status(500).json({ message: "خطأ في الخادم" });
+  }
+});
+
+export default router;
