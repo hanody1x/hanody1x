@@ -85,7 +85,7 @@ export default function AdminLogin() {
               <div className="flex flex-col gap-3">
                 <Button 
                   onClick={() => setShowWarning(false)}
-                  className="w-full bg-primary hover:bg-primary/90 text-white-keep rounded-xl py-6 font-bold text-lg"
+                  className="w-full bg-destructive hover:bg-destructive/90 text-white rounded-xl py-6 font-bold text-lg"
                 >
                   أنا المالك - متابعة
                 </Button>

@@ -5,11 +5,9 @@ import { siteContent } from "../schema/index.js";
 import { requireAuth } from "../lib/auth.js";
 import { eq } from "drizzle-orm";
 import path from "path";
-import { fileURLToPath } from "url";
 import fs from "fs";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadsDir = path.join(__dirname, "..", "..", "uploads");
+const uploadsDir = path.join(process.cwd(), "uploads");
 
 const router = Router();
 

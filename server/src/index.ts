@@ -2,15 +2,13 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { fileURLToPath } from "url";
+import fs from "fs";
 import authRouter from "./routes/auth.js";
 import contentRouter from "./routes/content.js";
 import uploadRouter from "./routes/upload.js";
 import healthRouter from "./routes/health.js";
 import messagesRouter from "./routes/messages.js";
 import rateLimit from "express-rate-limit";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -27,7 +25,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+const uploadsPath = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use("/uploads", express.static(uploadsPath));
 
 app.use("/api", healthRouter);
 app.use("/api/auth", authRouter);
@@ -42,7 +44,7 @@ const apiLimiter = rateLimit({
 app.use("/api/messages", apiLimiter, messagesRouter);
 
 // Serve static client files in production
-const clientDistPath = path.join(__dirname, "..", "..", "client", "dist");
+const clientDistPath = path.join(process.cwd(), "..", "client", "dist");
 app.use(express.static(clientDistPath));
 
 // SPA catch-all: serve index.html for any non-API route

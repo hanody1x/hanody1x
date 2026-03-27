@@ -373,18 +373,18 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
 
                   {/* Header */}
                   <div className="text-right mb-2">
-                    <h3 className={`text-2xl font-bold tracking-tight ${pkg.popular ? "text-foreground" : "text-foreground"}`}>{pkg.name}</h3>
+                    <h3 className={`text-2xl font-bold tracking-tight ${pkg.popular ? "text-white" : "text-foreground"}`}>{pkg.name}</h3>
                     {pkg.popular && <p className="text-xs text-primary/80 font-semibold mt-0.5">الخيار الأمثل للمحترفين</p>}
                   </div>
 
                   <div className="flex flex-col items-end gap-1 mb-8">
                     {isDiscountActive && (
-                      <span className="text-xl text-muted-foreground line-through decoration-red-500/70 font-semibold mb-[-4px]">
+                      <span className="text-xl text-white/50 line-through decoration-red-500/70 font-semibold mb-[-4px]">
                         ${pkg.price}
                       </span>
                     )}
                     <div className="flex items-baseline gap-1 justify-end">
-                      <span className="text-muted-foreground font-medium">/لكل صورة</span>
+                      <span className={`text-sm font-medium ${pkg.popular ? "text-white/70" : "text-muted-foreground"}`}>/لكل صورة</span>
                       <span className={`text-5xl font-black ${pkg.popular ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary" : "text-foreground"}`}>
                         ${isDiscountActive ? (parseFloat(pkg.price) * 0.8).toFixed(0) : pkg.price}
                       </span>
@@ -394,7 +394,7 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                   <ul className="space-y-4 mb-10 flex-grow">
                     {pkg.features.map((feat: string) => (
                       <li key={feat} className="flex items-center gap-3 text-sm justify-end">
-                        <span className={`font-medium ${pkg.popular ? "text-foreground" : "text-foreground/80"}`}>{feat}</span>
+                        <span className={`font-medium ${pkg.popular ? "text-white" : "text-foreground/80"}`}>{feat}</span>
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
                           pkg.popular
                             ? "bg-primary/20 shadow-[0_0_8px_rgba(139,92,246,0.4)]"
@@ -497,13 +497,13 @@ function CTRSection() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={defaultViewport}
                 transition={{ duration: 0.7, delay: idx * 0.1, ease: easeApple }}
-                className="relative flex items-start gap-6 p-6 rounded-3xl bg-card/20 hover:bg-card/50 transition-all duration-300 group flex-row-reverse overflow-hidden border border-transparent hover:border-border"
+                className="relative w-full flex items-center gap-6 p-6 rounded-3xl bg-card/20 hover:bg-card/50 transition-all duration-300 group overflow-hidden border border-transparent hover:border-border"
               >
                 <div className="absolute right-0 top-0 bottom-0 w-1 bg-primary transform translate-x-full group-hover:translate-x-0 transition-transform duration-300 shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
                 <div className="w-14 h-14 rounded-2xl bg-card border border-border flex items-center justify-center text-foreground group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shrink-0 shadow-lg">
                   {item.icon}
                 </div>
-                <div className="text-right">
+                <div className="text-right flex-1">
                   <h4 className="text-xl font-bold text-foreground mb-2 tracking-tight">{item.title}</h4>
                   <p className="text-gray-400 leading-relaxed">{item.desc}</p>
                 </div>
@@ -1096,14 +1096,14 @@ function SpecialOffer({
               {isDiscountActive ? "تم تفعيل الخصم بنجاح ✓" : "تفعيل الخصم 20% الآن"}
             </button>
             
-            <div className="flex items-center justify-center gap-4 mb-10">
+            <div className="flex items-center justify-center gap-2 md:gap-4 mb-8 md:mb-10 w-full max-w-full overflow-x-auto">
               {[{ v: fmt(d), l: "يوم" }, { v: fmt(h), l: "ساعة" }, { v: fmt(m), l: "دقيقة" }, { v: fmt(s), l: "ثانية" }].map(({ v, l }, i) => (
-                <div key={l} className="flex items-center gap-4">
+                <div key={l} className="flex items-center gap-2 md:gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="text-3xl font-mono font-black text-foreground glass-card px-4 py-2 rounded-xl border border-border min-w-[3rem]">{v}</div>
-                    <span className="text-xs text-muted-foreground mt-2 font-medium">{l}</span>
+                    <div className="text-xl md:text-3xl font-mono font-black text-foreground glass-card px-3 md:px-4 py-1.5 md:py-2 rounded-xl border border-border min-w-[2.5rem] md:min-w-[3rem] text-center">{v}</div>
+                    <span className="text-[10px] md:text-xs text-muted-foreground mt-2 font-medium">{l}</span>
                   </div>
-                  {i < 3 && <span className="text-primary text-2xl font-black mb-5">:</span>}
+                  {i < 3 && <span className="text-primary text-xl md:text-2xl font-black mb-5">:</span>}
                 </div>
               ))}
             </div>
@@ -1402,7 +1402,7 @@ function FinalCTA() {
           <Button 
             onClick={() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" })}
             size="lg" 
-            className="relative h-20 px-12 rounded-full bg-primary text-white text-2xl font-black hover:bg-primary/90 hover:scale-[1.05] hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.6)]"
+            className="relative h-16 md:h-20 px-8 md:px-12 rounded-full bg-primary text-white text-xl md:text-2xl font-black hover:bg-primary/90 hover:scale-[1.05] hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_15px_40px_rgba(59,130,246,0.6)]"
           >
             {finalCta.cta}
           </Button>
