@@ -3,7 +3,6 @@ export type CaseStudy = {
   name: string;
   niche: string;
   avatarInitials: string;
-  avatarImage?: string;
   shortBio: string;
   story: string;
   metrics: { label: string; value: string }[];

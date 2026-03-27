@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, ArrowRight, Eye, EyeOff, AlertTriangle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   username: z.string().min(1, "اسم المستخدم مطلوب"),
@@ -24,7 +23,6 @@ export default function AdminLogin() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showWarning, setShowWarning] = useState(true);
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -60,54 +58,19 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-background relative overflow-hidden">
-      <AnimatePresence>
-        {showWarning && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-card w-full max-w-md p-8 rounded-3xl border border-white/10 shadow-2xl text-center relative overflow-hidden"
-            >
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary" />
-              <div className="w-20 h-20 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_hsl(var(--primary)/0.2)]">
-                <AlertTriangle size={36} className="text-primary" />
-              </div>
-              <h2 className="text-2xl font-black text-white mb-4">تنبيه أمني</h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed text-lg">
-                هذه الصفحة مخصصة لصاحب الموقع فقط. في حال كنت صاحب الموقع يرجى الضغط على زر المتابعة.
-              </p>
-              <div className="flex flex-col gap-3">
-                <Button onClick={() => setShowWarning(false)} className="w-full h-14 rounded-2xl bg-primary text-white text-white-keep text-lg font-bold hover:bg-primary/90 hover:scale-[1.02] shadow-[0_10px_30px_hsl(var(--primary)/0.3)] transition-all">
-                  متابعة
-                </Button>
-                <Button variant="outline" onClick={() => navigate("/")} className="w-full h-14 rounded-2xl border-white/10 text-muted-foreground hover:text-white hover:bg-white/5 text-lg font-medium transition-all">
-                  الرجوع للصفحة الرئيسية
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <div className="min-h-screen flex items-center justify-center px-6 bg-background relative">
       <Button 
         variant="ghost" 
-        className="absolute top-6 right-6 text-muted-foreground hover:bg-primary hover:text-white-keep transition-all rounded-xl px-5 py-3 flex items-center gap-2 group"
+        className="absolute top-6 right-6 text-muted-foreground hover:text-white"
         onClick={() => navigate("/")}
       >
-        <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover:-translate-x-1" />
-        <span className="font-bold">العودة للرئيسية</span>
+        <ArrowRight className="w-4 h-4 ml-2" />
+        العودة للرئيسية
       </Button>
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-white text-white-keep" />
+            <Lock className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-2xl font-black text-white">لوحة التحكم</h1>
           <p className="text-muted-foreground mt-2">تسجيل الدخول للإدارة</p>
@@ -157,7 +120,7 @@ export default function AdminLogin() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white text-white-keep rounded-xl py-6 font-bold text-lg">
+              <Button type="submit" disabled={loading} className="w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-6 font-bold">
                 {loading ? "جاري الدخول..." : "تسجيل الدخول"}
               </Button>
             </form>

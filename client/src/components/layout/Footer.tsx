@@ -21,7 +21,7 @@ export function Footer() {
             <span className="text-lg font-bold text-white">{brand.name}</span>
           </div>
           <p className="text-muted-foreground text-sm text-center">
-            © 2026 Hanody1x. جميع الحقوق محفوظة.
+            © 2024 Hanody1x. جميع الحقوق محفوظة.
           </p>
           <nav className="flex items-center gap-6">
             <button onClick={() => document.getElementById("services")?.scrollIntoView({ behavior: "smooth" })} className="text-sm text-muted-foreground hover:text-white transition-colors">

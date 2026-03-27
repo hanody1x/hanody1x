@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Settings, Sun, Moon } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSection } from "@/hooks/useContent";
-import { smoothScrollTo } from "@/lib/scroll";
 
 const defaultBrand = { name: "Hanody1x", logoLetter: "H", logoImage: "" };
 
@@ -13,27 +12,6 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
-  const [isLightMode, setIsLightMode] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "light") {
-      setIsLightMode(true);
-      document.documentElement.classList.add("light");
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    if (isLightMode) {
-      document.documentElement.classList.remove("light");
-      localStorage.setItem("theme", "dark");
-      setIsLightMode(false);
-    } else {
-      document.documentElement.classList.add("light");
-      localStorage.setItem("theme", "light");
-      setIsLightMode(true);
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -49,7 +27,8 @@ export function Navbar() {
       window.location.href = `/#${id}`;
       return;
     }
-    smoothScrollTo(id);
+    const element = document.getElementById(id);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
   };
 
   const navLinks = [
@@ -82,27 +61,14 @@ export function Navbar() {
               {link.name}
             </button>
           ))}
-          <Button onClick={() => scrollTo("order")} className="bg-white text-black hover:bg-white/90 rounded-full px-6 font-semibold light-btn-blue">
+          <Button onClick={() => scrollTo("order")} className="bg-white text-black hover:bg-white/90 rounded-full px-6 font-semibold">
             اطلب الآن
           </Button>
         </nav>
 
-        <div className="flex items-center gap-3 md:mr-4">
-          <motion.button 
-            onClick={toggleTheme}
-            whileTap={{ scale: 0.8, rotate: 180 }}
-            animate={{ rotate: isLightMode ? 360 : 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="text-white/70 hover:text-white bg-white/5 hover:bg-white/10 p-2.5 rounded-xl transition-all border border-white/10 flex items-center justify-center"
-            title={isLightMode ? "تفعيل الوضع المظلم" : "تفعيل الوضع المضيء"}
-          >
-            {isLightMode ? <Moon size={18} /> : <Sun size={18} />}
-          </motion.button>
-
-          <Link href="/admin" className="text-sm font-semibold text-white/70 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2.5 rounded-xl transition-all border border-white/10">
-            لوحة التحكم
-          </Link>
-        </div>
+        <Link href="/admin" className="text-sm font-semibold text-white/70 hover:text-white bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/10 md:mr-4">
+          لوحة التحكم
+        </Link>
 
         {/* Mobile menu toggle */}
         <button className="md:hidden text-white mr-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -124,7 +90,7 @@ export function Navbar() {
                 {link.name}
               </button>
             ))}
-            <Button onClick={() => scrollTo("order")} className="bg-white text-black hover:bg-white/90 rounded-full font-semibold w-full light-btn-blue">
+            <Button onClick={() => scrollTo("order")} className="bg-white text-black hover:bg-white/90 rounded-full font-semibold w-full">
               اطلب الآن
             </Button>
           </motion.div>

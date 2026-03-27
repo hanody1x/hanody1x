@@ -1,6 +1,5 @@
 /// <reference types="vite/client" />
 import { useEffect, useState, useRef } from "react";
-import { createPortal } from "react-dom";
 import { motion, useInView, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { ParticleField } from "@/components/ParticleField";
 import { Link } from "wouter";
@@ -39,10 +38,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { caseStudies as defaultCaseStudies, portfolioItems } from "@/lib/data";
 import { useImages, useSection } from "@/hooks/useContent";
-import { smoothScrollTo } from "@/lib/scroll";
-import { PageTransition } from "@/components/layout/PageTransition";
 
-const easeApple = "easeOut";
+const easeApple = [0.25, 0.46, 0.45, 0.94];
 const defaultViewport = { once: true, margin: "-100px" };
 
 function addRipple(e: React.MouseEvent<HTMLElement>) {
@@ -176,14 +173,14 @@ function Hero() {
               className="flex flex-col sm:flex-row gap-4 mb-12 justify-end will-change-transform"
             >
               <Button 
-                onClick={(e) => { addRipple(e); smoothScrollTo("order"); }}
+                onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
                 size="lg" 
                 className="h-14 px-8 rounded-2xl bg-white text-background text-lg font-bold border-0 shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_10px_40px_rgba(255,255,255,0.4)] hover:scale-105 hover:-translate-y-1 transition-all duration-300 btn-shimmer btn-glow-white ripple-host"
               >
                 {h.ctaPrimary}
               </Button>
               <Button 
-                onClick={(e) => { addRipple(e); smoothScrollTo("portfolio"); }}
+                onClick={(e) => { addRipple(e); document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" }); }}
                 size="lg" 
                 variant="outline"
                 className="h-14 px-8 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 text-lg font-semibold hover:scale-105 hover:-translate-y-1 transition-all duration-300 btn-glow ripple-host"
@@ -217,8 +214,7 @@ function Hero() {
             <motion.div 
               animate={{ y: [0, -15, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              whileHover={{ scale: 1.05, zIndex: 30 }}
-              className="absolute top-10 right-4 w-4/5 rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 shadow-primary/20 rotate-2 glass-card cursor-pointer hover:shadow-[0_20px_50px_hsl(var(--primary) / 0.3)] transition-shadow duration-500"
+              className="absolute top-10 right-4 w-4/5 rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-20 shadow-primary/20 rotate-2 glass-card"
             >
               <img src={images.heroCard1 || `${import.meta.env.BASE_URL}images/thumb-1.png`} alt="نموذج صورة مصغرة" className="w-full h-auto" />
             </motion.div>
@@ -226,10 +222,9 @@ function Hero() {
             <motion.div 
               animate={{ y: [0, 15, 0] }}
               transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
-              whileHover={{ scale: 1.05, zIndex: 30, opacity: 1 }}
-              className="absolute bottom-20 left-0 w-3/4 rounded-2xl overflow-hidden border border-white/5 shadow-2xl z-10 -rotate-3 opacity-60 backdrop-blur-xl cursor-pointer group hover:shadow-[0_20px_50px_hsl(var(--primary) / 0.3)] transition-all duration-500"
+              className="absolute bottom-20 left-0 w-3/4 rounded-2xl overflow-hidden border border-white/5 shadow-2xl z-10 -rotate-3 opacity-60 backdrop-blur-xl"
             >
-              <img src={images.heroCard2 || `${import.meta.env.BASE_URL}images/thumb-2.png`} alt="نموذج صورة مصغرة" className="w-full h-auto grayscale-[30%] group-hover:grayscale-0 transition-all duration-500" />
+              <img src={images.heroCard2 || `${import.meta.env.BASE_URL}images/thumb-2.png`} alt="نموذج صورة مصغرة" className="w-full h-auto grayscale-[30%]" />
             </motion.div>
           </motion.div>
         </div>
@@ -367,10 +362,10 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                   {/* Popular badge */}
                   {pkg.popular && (
                     <>
-                      <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-secondary text-white text-white-keep text-xs font-black tracking-wider whitespace-nowrap shadow-[0_0_25px_hsl(var(--primary) / 0.6)] z-20">
-                        <Sparkles size={12} className="fill-white text-white-keep" />
+                      <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-5 py-1.5 rounded-full bg-gradient-to-r from-primary to-secondary text-white text-xs font-black tracking-wider whitespace-nowrap shadow-[0_0_25px_rgba(139,92,246,0.6)] z-20">
+                        <Sparkles size={12} className="fill-white" />
                         الأكثر طلباً
-                        <Sparkles size={12} className="fill-white text-white-keep" />
+                        <Sparkles size={12} className="fill-white" />
                       </div>
                       {/* Top accent line */}
                       <div className="absolute top-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent rounded-full z-0" />
@@ -403,7 +398,7 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                         <span className={`font-medium ${pkg.popular ? "text-white" : "text-gray-300"}`}>{feat}</span>
                         <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
                           pkg.popular
-                            ? "bg-primary/20 shadow-[0_0_8px_hsl(var(--primary) / 0.4)]"
+                            ? "bg-primary/20 shadow-[0_0_8px_rgba(139,92,246,0.4)]"
                             : "bg-white/5"
                         }`}>
                           <CheckCircle2 size={14} className={pkg.popular ? "text-primary" : "text-white/40"} />
@@ -413,14 +408,14 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                   </ul>
 
                   <Button
-                    onClick={(e) => { addRipple(e); smoothScrollTo("order"); }}
+                    onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
                     className={`w-full rounded-2xl py-7 text-lg font-bold transition-all ripple-host ${
                       pkg.popular
-                        ? "bg-gradient-to-r from-primary to-secondary text-white text-white-keep shadow-[0_4px_30px_hsl(var(--primary) / 0.5)] hover:shadow-[0_4px_40px_hsl(var(--primary) / 0.7)] hover:scale-[1.02]"
+                        ? "bg-gradient-to-r from-primary to-secondary text-white shadow-[0_4px_30px_rgba(139,92,246,0.5)] hover:shadow-[0_4px_40px_rgba(139,92,246,0.7)] hover:scale-[1.02]"
                         : "bg-white/5 text-white hover:bg-white/10 border border-white/10 btn-glow"
                     }`}
                   >
-                    {pkg.popular && <Sparkles size={16} className="ml-2 inline text-white-keep" />}
+                    {pkg.popular && <Sparkles size={16} className="ml-2 inline" />}
                     اختر {pkg.name}
                   </Button>
                 </div>
@@ -484,8 +479,8 @@ function CTRSection() {
               transition={{ duration: 0.7, delay: 0.2, ease: easeApple }}
               className="inline-flex items-center gap-4 glass-card p-6 rounded-3xl relative overflow-hidden group"
             >
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/50 rounded-3xl transition-colors duration-500" style={{ boxShadow: "inset 0 0 20px hsl(var(--primary) / 0)" }} />
-              <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_hsl(var(--primary) / 0.3)]">
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/50 rounded-3xl transition-colors duration-500" style={{ boxShadow: "inset 0 0 20px rgba(139,92,246,0)" }} />
+              <div className="w-14 h-14 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(139,92,246,0.3)]">
                 <TrendingUp size={28} />
               </div>
               <div className="text-right z-10">
@@ -505,13 +500,13 @@ function CTRSection() {
                 transition={{ duration: 0.7, delay: idx * 0.1, ease: easeApple }}
                 className="relative flex items-start gap-6 p-6 rounded-3xl bg-card/20 hover:bg-card/50 transition-all duration-300 group flex-row-reverse overflow-hidden border border-transparent hover:border-white/5"
               >
-                <div className="absolute right-0 top-0 bottom-0 w-1 bg-primary transform translate-x-full group-hover:translate-x-0 transition-transform duration-300 shadow-[0_0_15px_hsl(var(--primary) / 0.8)]" />
+                <div className="absolute right-0 top-0 bottom-0 w-1 bg-primary transform translate-x-full group-hover:translate-x-0 transition-transform duration-300 shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
                 <div className="w-14 h-14 rounded-2xl bg-card border border-white/5 flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shrink-0 shadow-lg">
                   {item.icon}
                 </div>
-                <div className="text-right flex-1 pt-3">
-                  <h4 className="text-xl font-bold text-white tracking-tight inline ml-1">{item.title}:</h4>
-                  <p className="text-gray-400 leading-relaxed inline"> {item.desc}</p>
+                <div className="text-right">
+                  <h4 className="text-xl font-bold text-white mb-2 tracking-tight">{item.title}</h4>
+                  <p className="text-gray-400 leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -629,7 +624,7 @@ function ClientShowcase() {
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               
               <div className="flex items-center gap-5 mb-6 flex-row-reverse">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform duration-500 group-hover:shadow-[0_0_20px_hsl(var(--primary) / 0.5)] overflow-hidden">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform duration-500 group-hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] overflow-hidden">
                   {(client as any).avatarImage ? (
                     <img src={(client as any).avatarImage} alt={client.name} className="w-full h-full object-cover" />
                   ) : (
@@ -703,45 +698,42 @@ function PortfolioGrid() {
       </div>
 
       {/* Lightbox */}
-      {createPortal(
-        <AnimatePresence>
-          {lightboxSrc && (
+      <AnimatePresence>
+        {lightboxSrc && (
+          <motion.div
+            key="lightbox-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+            onClick={closeLightbox}
+          >
             <motion.div
-              key="lightbox-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
-              onClick={closeLightbox}
+              key="lightbox-image"
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.85, opacity: 0 }}
+              transition={{ duration: 0.35, ease: easeApple }}
+              className="relative max-w-5xl w-full"
+              onClick={e => e.stopPropagation()}
             >
-              <motion.div
-                key="lightbox-image"
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.85, opacity: 0 }}
-                transition={{ duration: 0.35, ease: easeApple }}
-                className="relative max-w-5xl w-full"
-                onClick={e => e.stopPropagation()}
+              <img
+                src={lightboxSrc}
+                alt="عرض مكبّر"
+                className="w-full h-auto max-h-[85vh] object-contain rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.8)]"
+              />
+              <button
+                onClick={closeLightbox}
+                className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center text-white font-bold text-lg shadow-xl"
+                aria-label="إغلاق"
               >
-                <img
-                  src={lightboxSrc}
-                  alt="عرض مكبّر"
-                  className="w-full h-auto max-h-[85vh] object-contain rounded-2xl shadow-[0_30px_80px_rgba(0,0,0,0.8)]"
-                />
-                <button
-                  onClick={closeLightbox}
-                  className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-primary hover:bg-primary/80 transition-colors flex items-center justify-center text-white font-bold text-lg shadow-xl"
-                  aria-label="إغلاق"
-                >
-                  ✕
-                </button>
-              </motion.div>
+                ✕
+              </button>
             </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -795,9 +787,9 @@ function WhyChooseMe() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={defaultViewport}
                 transition={{ duration: 0.7, delay: idx * 0.1, ease: easeApple }}
-                className={`text-center p-8 glass-card rounded-3xl transition-all duration-300 card-glow relative ${isHovered ? 'scale-110 z-10 bg-card/60 shadow-[0_20px_50px_hsl(var(--primary) / 0.25)] -translate-y-2' : isOtherHovered ? 'blur-sm opacity-50 scale-95' : 'hover:bg-card/40'}`}
+                className={`text-center p-8 glass-card rounded-3xl transition-all duration-300 card-glow relative ${isHovered ? 'scale-110 z-10 bg-card/60 shadow-[0_20px_50px_rgba(139,92,246,0.25)] -translate-y-2' : isOtherHovered ? 'blur-sm opacity-50 scale-95' : 'hover:bg-card/40'}`}
               >
-                <div className={`w-20 h-20 mx-auto rounded-3xl bg-white/5 flex items-center justify-center mb-8 transition-all duration-500 ${isHovered ? 'text-primary bg-primary/20 scale-110 shadow-[0_0_30px_hsl(var(--primary) / 0.4)]' : 'text-primary/70'}`}>
+                <div className={`w-20 h-20 mx-auto rounded-3xl bg-white/5 flex items-center justify-center mb-8 transition-all duration-500 ${isHovered ? 'text-primary bg-primary/20 scale-110 shadow-[0_0_30px_rgba(139,92,246,0.4)]' : 'text-primary/70'}`}>
                   {feat.icon}
                 </div>
                 <h3 className="text-xl font-bold text-white mb-4 tracking-tight">{feat.title}</h3>
@@ -830,27 +822,27 @@ function HowItWorks() {
       icon: <Send size={28} />,
       title: hiw.step1Title,
       desc: hiw.step1Desc,
-      color: "from-primary/20 to-primary/5",
-      border: "border-primary/20",
-      glow: "hsl(var(--primary) / 0.3)",
+      color: "from-violet-500/20 to-violet-500/5",
+      border: "border-violet-500/20",
+      glow: "rgba(139,92,246,0.3)",
     },
     {
       num: "02",
       icon: <Pencil size={28} />,
       title: hiw.step2Title,
       desc: hiw.step2Desc,
-      color: "from-secondary/20 to-secondary/5",
-      border: "border-secondary/20",
-      glow: "hsl(var(--secondary) / 0.3)",
+      color: "from-blue-500/20 to-blue-500/5",
+      border: "border-blue-500/20",
+      glow: "rgba(59,130,246,0.3)",
     },
     {
       num: "03",
       icon: <Download size={28} />,
       title: hiw.step3Title,
       desc: hiw.step3Desc,
-      color: "from-accent/20 to-accent/5",
-      border: "border-accent/20",
-      glow: "hsl(var(--accent) / 0.3)",
+      color: "from-green-500/20 to-green-500/5",
+      border: "border-green-500/20",
+      glow: "rgba(34,197,94,0.3)",
     },
   ];
 
@@ -874,7 +866,7 @@ function HowItWorks() {
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative">
-          <div className="hidden md:block absolute top-16 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 pointer-events-none" />
+          <div className="hidden md:block absolute top-16 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-gradient-to-r from-violet-500/30 via-blue-500/30 to-green-500/30 pointer-events-none" />
           
           {steps.map((step, idx) => (
             <motion.div
@@ -943,7 +935,7 @@ function About() {
               <div className="relative glass-card rounded-3xl overflow-hidden border border-white/10 p-1">
                 <div className="w-full aspect-square rounded-2xl bg-gradient-to-br from-primary/20 via-background to-secondary/20 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-5xl font-black mb-4 shadow-[0_0_40px_hsl(var(--primary) / 0.5)] overflow-hidden">
+                    <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-5xl font-black mb-4 shadow-[0_0_40px_rgba(139,92,246,0.5)] overflow-hidden">
                       {about.logoImage ? (
                         <img src={about.logoImage} alt="Brand" className="w-full h-full object-cover" />
                       ) : (
@@ -1076,7 +1068,7 @@ function SpecialOffer({
             <motion.div
               animate={{ rotate: [0, 5, -5, 0] }}
               transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary mb-6 shadow-[0_0_30px_hsl(var(--primary) / 0.5)]"
+              className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary mb-6 shadow-[0_0_30px_rgba(139,92,246,0.5)]"
             >
               <Gift size={28} className="text-white" />
             </motion.div>
@@ -1099,7 +1091,7 @@ function SpecialOffer({
               className={`inline-flex items-center justify-center gap-3 border rounded-2xl px-10 py-5 mb-8 transition-all font-black text-xl lg:text-2xl ${
                 isDiscountActive 
                   ? "bg-green-500/20 border-green-500/50 text-green-400 cursor-default"
-                  : "bg-primary/20 border-primary/50 text-white text-white-keep hover:bg-primary/40 hover:scale-105 shadow-[0_0_30px_hsl(var(--primary) / 0.5)]"
+                  : "bg-primary/20 border-primary/50 text-white hover:bg-primary/40 hover:scale-105 shadow-[0_0_30px_rgba(139,92,246,0.5)]"
               }`}
             >
               {isDiscountActive ? "تم تفعيل الخصم بنجاح ✓" : "تفعيل الخصم 20% الآن"}
@@ -1120,7 +1112,7 @@ function SpecialOffer({
             <Button
               onClick={() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" })}
               size="lg"
-              className="h-14 px-10 rounded-full bg-white text-black text-lg font-black hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.25)] transition-all duration-300 light-btn-blue"
+              className="h-14 px-10 rounded-full bg-white text-black text-lg font-black hover:scale-105 hover:-translate-y-1 hover:shadow-[0_10px_40px_rgba(255,255,255,0.25)] transition-all duration-300"
             >
               <Sparkles className="ml-2" size={20} />
               استخدم العرض الآن
@@ -1157,14 +1149,14 @@ function StickyOrderButton() {
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#25D366] text-white text-white-keep font-bold text-sm shadow-[0_4px_30px_rgba(37,211,102,0.4)] hover:scale-105 hover:shadow-[0_4px_40px_rgba(37,211,102,0.6)] transition-all duration-300"
+            className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-[#25D366] text-white font-bold text-sm shadow-[0_4px_30px_rgba(37,211,102,0.4)] hover:scale-105 hover:shadow-[0_4px_40px_rgba(37,211,102,0.6)] transition-all duration-300"
           >
             <MessageCircle size={20} fill="white" />
             تواصل عبر واتساب
           </a>
           <button
             onClick={() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" })}
-            className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-primary text-white-keep text-white font-bold text-sm shadow-[0_4px_30px_hsl(var(--primary) / 0.4)] hover:scale-105 hover:shadow-[0_4px_40px_hsl(var(--primary) / 0.6)] transition-all duration-300"
+            className="flex items-center gap-3 px-5 py-3.5 rounded-full bg-primary text-white font-bold text-sm shadow-[0_4px_30px_rgba(139,92,246,0.4)] hover:scale-105 hover:shadow-[0_4px_40px_rgba(139,92,246,0.6)] transition-all duration-300"
           >
             <Inbox size={18} />
             اطلب الآن
@@ -1331,7 +1323,7 @@ function Contact({ isDiscountActive }: { isDiscountActive?: boolean }) {
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full h-16 bg-primary text-white text-white-keep hover:bg-primary/90 rounded-2xl font-black text-xl hover:scale-[1.02] transition-all shadow-[0_0_20px_hsl(var(--primary) / 0.3)]"
+                  className="w-full h-16 bg-white text-black hover:bg-white/90 rounded-2xl font-black text-xl hover:scale-[1.02] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
                 >
                   {isSubmitting ? "جارٍ الإرسال..." : "إرسال الرسالة"}
                 </Button>
@@ -1396,7 +1388,7 @@ function FinalCTA() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={defaultViewport}
           transition={{ duration: 1, ease: easeApple }}
-          className="text-6xl md:text-[6rem] font-black text-white light-text-primary mb-10 tracking-tighter leading-tight"
+          className="text-6xl md:text-[6rem] font-black text-white mb-10 tracking-tighter leading-tight"
         >
           {finalCta.headline}
         </motion.h2>
@@ -1409,9 +1401,9 @@ function FinalCTA() {
         >
           <div className="absolute -inset-2 bg-gradient-to-r from-primary to-secondary rounded-full opacity-30 group-hover:opacity-100 group-hover:blur-2xl transition-all duration-700" />
           <Button 
-            onClick={() => smoothScrollTo("order")}
+            onClick={() => document.getElementById("order")?.scrollIntoView({ behavior: "smooth" })}
             size="lg" 
-            className="relative h-20 px-12 rounded-full bg-primary text-white text-white-keep text-2xl font-black hover:bg-primary/90 hover:scale-[1.05] hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_hsl(var(--primary) / 0.4)] hover:shadow-[0_15px_40px_hsl(var(--primary) / 0.7)]"
+            className="relative h-20 px-12 rounded-full bg-white text-black text-2xl font-black hover:bg-white/90 hover:scale-[1.05] hover:-translate-y-1 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.7)]"
           >
             {finalCta.cta}
           </Button>
@@ -1425,8 +1417,7 @@ export default function Home() {
   const [isDiscountActive, setIsDiscountActive] = useState(false);
 
   return (
-    <PageTransition>
-      <div className="overflow-hidden flex flex-col flex-1 bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       <StickyOrderButton />
       <Hero />
       <Stats />
@@ -1434,7 +1425,7 @@ export default function Home() {
       <Pricing isDiscountActive={isDiscountActive} />
       <SpecialOffer isDiscountActive={isDiscountActive} onActivateDiscount={() => {
         setIsDiscountActive(true);
-        smoothScrollTo("services");
+        document.getElementById("services")?.scrollIntoView({ behavior: "smooth" });
       }} />
       <CTRSection />
       <About />
@@ -1444,7 +1435,6 @@ export default function Home() {
       <WhyChooseMe />
       <Contact isDiscountActive={isDiscountActive} />
       <FinalCTA />
-      </div>
-    </PageTransition>
+    </div>
   );
 }

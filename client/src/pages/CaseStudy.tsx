@@ -4,10 +4,8 @@ import { ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { caseStudies as defaultCaseStudies } from "@/lib/data";
 import { useSection } from "@/hooks/useContent";
-import { PageTransition } from "@/components/layout/PageTransition";
-import { smoothScrollTo } from "@/lib/scroll";
 
-const easeApple = [0.25, 0.46, 0.45, 0.94];
+const easeApple = "easeOut";
 
 export default function CaseStudy() {
   const { id } = useParams<{ id: string }>();
@@ -26,28 +24,25 @@ export default function CaseStudy() {
   }
 
   return (
-    <PageTransition>
-      <main className="min-h-screen pt-32 pb-20 flex flex-col flex-1">
-        <div className="container mx-auto px-6 max-w-4xl">
+    <main className="min-h-screen pt-32 pb-20">
+      <div className="container mx-auto px-6 max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: easeApple }}
         >
-          <button onClick={() => { window.location.href = "/#showcase"; setTimeout(() => smoothScrollTo("showcase"), 100); }} className="flex items-center gap-2 text-muted-foreground hover:text-white transition-colors mb-8">
-            <ArrowRight className="w-4 h-4" />
-            <span>العودة لقصص النجاح</span>
-          </button>
+          <Link href="/#showcase">
+            <button className="flex items-center gap-2 text-muted-foreground hover:text-white transition-colors mb-8">
+              <ArrowRight className="w-4 h-4" />
+              <span>العودة لقصص النجاح</span>
+            </button>
+          </Link>
 
           <div className="glass-panel rounded-3xl p-8 md:p-12 mb-8">
             <div className="flex items-center gap-4 mb-8">
-              {study.avatarImage ? (
-                <img src={study.avatarImage} alt={study.name} className="w-16 h-16 rounded-2xl object-cover border-2 border-primary" />
-              ) : (
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-xl font-black">
-                  {study.avatarInitials}
-                </div>
-              )}
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-xl font-black">
+                {study.avatarInitials}
+              </div>
               <div>
                 <h1 className="text-2xl font-black text-white">{study.name}</h1>
                 <p className="text-muted-foreground">{study.niche}</p>
@@ -73,14 +68,15 @@ export default function CaseStudy() {
             </div>
           </div>
 
-            <div className="text-center">
-              <button onClick={() => { window.location.href = "/#order"; setTimeout(() => smoothScrollTo("order"), 100); }} className="bg-primary hover:bg-primary/90 text-white rounded-full px-10 py-6 text-lg font-bold light-btn-blue text-white-keep">
+          <div className="text-center">
+            <Link href="/#order">
+              <Button className="bg-primary hover:bg-primary/90 text-white rounded-full px-10 py-6 text-lg font-bold">
                 احصل على نتائج مماثلة
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </main>
-    </PageTransition>
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </main>
   );
 }
