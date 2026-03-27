@@ -95,7 +95,7 @@ export default function AdminDashboard() {
     }
   }
 
-  const updateCaseStudy = (index: number, field: string, value: string) => {
+  const updateCaseStudy = (index: number, field: string, value: any) => {
     setSections(prev => {
       const currentCaseStudies = Array.isArray(prev.caseStudies) && prev.caseStudies.length > 0 
         ? [...prev.caseStudies] 
@@ -312,6 +312,42 @@ export default function AdminDashboard() {
                   <Textarea value={study.shortBio || ""} onChange={(e) => updateCaseStudy(idx, 'shortBio', e.target.value)} dir="rtl" className="bg-card/50 min-h-20" />
                 </div>
                 
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-400 mb-2">الإحصائيات (الأرقام والنصوص المجاورة)</label>
+                  <div className="space-y-4">
+                    {(study.metrics || []).map((metric: any, mIdx: number) => (
+                      <div key={mIdx} className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">الرقم / القيمة</label>
+                          <Input 
+                            value={metric.value || ""} 
+                            onChange={(e) => {
+                              const newMetrics = [...(study.metrics || [])];
+                              newMetrics[mIdx] = { ...newMetrics[mIdx], value: e.target.value };
+                              updateCaseStudy(idx, 'metrics', newMetrics);
+                            }} 
+                            dir="rtl" 
+                            className="bg-card/50" 
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">النص / الوصف</label>
+                          <Input 
+                            value={metric.label || ""} 
+                            onChange={(e) => {
+                              const newMetrics = [...(study.metrics || [])];
+                              newMetrics[mIdx] = { ...newMetrics[mIdx], label: e.target.value };
+                              updateCaseStudy(idx, 'metrics', newMetrics);
+                            }} 
+                            dir="rtl" 
+                            className="bg-card/50" 
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="mb-4">
                   <label className="block text-sm text-gray-400 mb-2">القصة الكاملة (تظهر في صفحة دراسة الحالة)</label>
                   <Textarea value={study.story || ""} onChange={(e) => updateCaseStudy(idx, 'story', e.target.value)} dir="rtl" className="bg-card/50 min-h-32" />
