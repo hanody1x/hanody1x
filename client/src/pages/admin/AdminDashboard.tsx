@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Save, Upload, Trash2, Settings, Mail, MailOpen, ChevronDown, ChevronUp, Package, User, AtSign, Clock, Inbox, Shield, ShieldCheck, ShieldX, Globe } from "lucide-react";
+import { LogOut, Save, Upload, Trash2, Settings, Mail, MailOpen, ChevronDown, ChevronUp, Package, User, AtSign, Clock, Inbox, Shield, ShieldCheck, ShieldX, Globe, Smartphone, Monitor } from "lucide-react";
 import { caseStudies as defaultCaseStudies } from "@/lib/data";
 
 interface ContactMessage {
@@ -15,7 +15,7 @@ interface ContactMessage {
   service: string | null;
   message: string;
   read: boolean;
-  created_at: string;
+  createdAt: string | number;
 }
 
 interface LoginLog {
@@ -315,7 +315,8 @@ export default function AdminDashboard() {
               <div className="space-y-3">
                 {messages.slice().reverse().map((msg) => {
                   const isExpanded = expandedMsg === msg.id;
-                  const date = new Date(typeof msg.created_at === 'number' ? msg.created_at * 1000 : msg.created_at);
+                  const dateValue = typeof msg.createdAt === 'number' && msg.createdAt < 1e12 ? msg.createdAt * 1000 : msg.createdAt;
+                  const date = new Date(dateValue || new Date());
                   const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                   return (
                     <div
@@ -465,19 +466,44 @@ export default function AdminDashboard() {
                   const formattedTime = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                   const isSuccess = log.success === true || log.success === 1;
                   
-                  // Device parsing logic
-                  let shortDevice = "جهاز غير معروف";
+                  let shortDevice = "غير معروف";
                   let DeviceIcon = Globe;
                   if (log.deviceInfo) {
-                    const ua = log.deviceInfo.toLowerCase();
-                    if (ua.includes("mobile") || ua.includes("android") || ua.includes("iphone")) {
-                      shortDevice = "هاتف محمول";
-                    } else if (ua.includes("windows") || ua.includes("mac") || ua.includes("linux")) {
-                      shortDevice = "جهاز كمبيوتر";
-                    } else {
-                      shortDevice = "متصفح ويب";
+                    const ua = log.deviceInfo;
+                    
+                    const getOS = (ua: string) => {
+                      if (ua.match(/Windows NT 10.0/)) return "Windows 10/11";
+                      if (ua.match(/Windows NT/)) return "Windows";
+                      if (ua.match(/Mac OS X/)) return "Mac";
+                      if (ua.match(/iPhone/)) return "iPhone";
+                      if (ua.match(/iPad/)) return "iPad";
+                      const androidMatch = ua.match(/Android\s([0-9\.]+)[\s;]+([^;]+)\sBuild/);
+                      if (androidMatch) return `Android (${androidMatch[2].trim()})`;
+                      if (ua.match(/Android/)) return "Android";
+                      if (ua.match(/Linux/)) return "Linux";
+                      return "جهاز";
+                    };
+                    
+                    const getBrowser = (ua: string) => {
+                      if (ua.match(/Edg/)) return "Edge";
+                      if (ua.match(/Chrome/)) return "Chrome";
+                      if (ua.match(/Safari/) && !ua.match(/Chrome/)) return "Safari";
+                      if (ua.match(/Firefox/)) return "Firefox";
+                      return "متصفح";
+                    };
+
+                    const os = getOS(ua);
+                    shortDevice = `${os} - ${getBrowser(ua)}`;
+                    
+                    if (os.includes("iPhone") || os.includes("iPad") || os.includes("Android")) {
+                      DeviceIcon = Smartphone;
+                    } else if (os.includes("Windows") || os.includes("Mac") || os.includes("Linux")) {
+                      DeviceIcon = Monitor;
                     }
                   }
+                  
+                  // Format ::1 to Localhost for better UX during local testing
+                  const displayIp = log.ipAddress === "::1" ? "Localhost (جهازك الخاص)" : log.ipAddress;
 
                   return (
                     <div
@@ -518,7 +544,7 @@ export default function AdminDashboard() {
                             {log.ipAddress && (
                               <span className="flex items-center gap-1 bg-black/20 px-2 py-1 rounded-md">
                                 <span className="text-[10px] uppercase font-bold text-muted-foreground/50">IP:</span>
-                                <span dir="ltr" className="font-mono text-[11px]">{log.ipAddress}</span>
+                                <span dir="ltr" className="font-mono text-[11px]">{displayIp}</span>
                               </span>
                             )}
                             <span className="flex items-center gap-1 bg-black/20 px-2 py-1 rounded-md">

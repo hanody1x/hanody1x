@@ -21,7 +21,9 @@ const loginLimiter = rateLimit({
 });
 
 router.post("/login", loginLimiter, async (req, res) => {
-  const ipAddress = req.ip || req.socket.remoteAddress || "unknown";
+  const forwardedFor = req.headers["x-forwarded-for"];
+  const proxyIp = typeof forwardedFor === "string" ? forwardedFor.split(",")[0] : undefined;
+  const ipAddress = proxyIp || req.ip || req.socket.remoteAddress || "unknown";
   const deviceInfo = req.headers["user-agent"] || "unknown";
   try {
     const { username, password } = loginSchema.parse(req.body);
