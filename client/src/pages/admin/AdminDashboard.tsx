@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Save, Upload, Trash2, Settings, Mail, MailOpen, ChevronDown, ChevronUp, Package, User, AtSign, Clock, Inbox } from "lucide-react";
+import { LogOut, Save, Upload, Trash2, Settings, Mail, MailOpen, ChevronDown, ChevronUp, Package, User, AtSign, Clock, Inbox, Shield, ShieldCheck, ShieldX, Globe } from "lucide-react";
 import { caseStudies as defaultCaseStudies } from "@/lib/data";
 
 interface ContactMessage {
@@ -16,6 +16,14 @@ interface ContactMessage {
   message: string;
   read: boolean;
   created_at: string;
+}
+
+interface LoginLog {
+  id: number;
+  username: string;
+  ip_address: string | null;
+  success: boolean | number;
+  attempted_at: string | number;
 }
 
 const packageLabels: Record<string, string> = {
@@ -35,6 +43,8 @@ export default function AdminDashboard() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [expandedMsg, setExpandedMsg] = useState<number | null>(null);
   const [messagesLoading, setMessagesLoading] = useState(false);
+  const [loginLogs, setLoginLogs] = useState<LoginLog[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -44,6 +54,7 @@ export default function AdminDashboard() {
     fetchSections();
     fetchImages();
     fetchMessages();
+    fetchLoginLogs();
   }, [isAuthenticated]);
 
   async function fetchSections() {
@@ -78,6 +89,23 @@ export default function AdminDashboard() {
       console.error("Failed to fetch messages", err);
     } finally {
       setMessagesLoading(false);
+    }
+  }
+
+  async function fetchLoginLogs() {
+    setLogsLoading(true);
+    try {
+      const res = await fetch("/api/auth/logs", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setLoginLogs(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch login logs", err);
+    } finally {
+      setLogsLoading(false);
     }
   }
 
@@ -173,6 +201,20 @@ export default function AdminDashboard() {
         ? [...prev.caseStudies] 
         : [...defaultCaseStudies];
       currentCaseStudies[index] = { ...currentCaseStudies[index], [field]: value };
+      return { ...prev, caseStudies: currentCaseStudies };
+    });
+  };
+
+  const updateCaseStudyMetric = (studyIndex: number, metricIndex: number, field: 'label' | 'value', val: string) => {
+    setSections(prev => {
+      const currentCaseStudies = Array.isArray(prev.caseStudies) && prev.caseStudies.length > 0 
+        ? [...prev.caseStudies] 
+        : [...defaultCaseStudies];
+      const study = { ...currentCaseStudies[studyIndex] };
+      const metrics = [...(study.metrics || defaultCaseStudies[studyIndex]?.metrics || [])];
+      metrics[metricIndex] = { ...metrics[metricIndex], [field]: val };
+      study.metrics = metrics;
+      currentCaseStudies[studyIndex] = study;
       return { ...prev, caseStudies: currentCaseStudies };
     });
   };
@@ -372,6 +414,84 @@ export default function AdminDashboard() {
               </div>
             )}
           </div>
+
+          {/* ===== LOGIN LOGS ===== */}
+          <div className="glass-panel rounded-3xl p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Shield className="w-6 h-6 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">سجل تسجيلات الدخول</h2>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchLoginLogs}
+                disabled={logsLoading}
+                className="border-border text-muted-foreground hover:text-foreground text-xs"
+              >
+                {logsLoading ? "جارٍ التحديث..." : "تحديث"}
+              </Button>
+            </div>
+
+            {loginLogs.length === 0 ? (
+              <div className="text-center py-16">
+                <Shield className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-muted-foreground text-sm">لا توجد سجلات دخول حتى الآن</p>
+              </div>
+            ) : (
+              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                {loginLogs.map((log) => {
+                  const date = new Date(typeof log.attempted_at === 'number' ? log.attempted_at * 1000 : log.attempted_at);
+                  const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+                  const formattedTime = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                  const isSuccess = log.success === true || log.success === 1;
+                  return (
+                    <div
+                      key={log.id}
+                      className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+                        isSuccess
+                          ? 'bg-green-500/5 border-green-500/20'
+                          : 'bg-red-500/5 border-red-500/20'
+                      }`}
+                    >
+                      <div className="flex-shrink-0">
+                        {isSuccess ? (
+                          <ShieldCheck className="w-5 h-5 text-green-500" />
+                        ) : (
+                          <ShieldX className="w-5 h-5 text-red-500" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 text-right">
+                        <div className="flex items-center gap-2 justify-end mb-1">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            isSuccess
+                              ? 'bg-green-500/20 text-green-400'
+                              : 'bg-red-500/20 text-red-400'
+                          }`}>
+                            {isSuccess ? 'نجاح' : 'فشل'}
+                          </span>
+                          <span className="font-bold text-sm text-foreground">{log.username}</span>
+                        </div>
+                        <div className="flex items-center gap-3 justify-end text-xs text-muted-foreground/60">
+                          {log.ip_address && (
+                            <span className="flex items-center gap-1">
+                              <Globe className="w-3 h-3" />
+                              <span dir="ltr">{log.ip_address}</span>
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {formattedTime}
+                          </span>
+                          <span>{formattedDate}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
           <div className="glass-panel rounded-3xl p-8">
             <h2 className="text-xl font-bold text-foreground mb-6">صورتي المرفوعة</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -544,6 +664,43 @@ export default function AdminDashboard() {
                 <div className="mb-4">
                   <label className="block text-sm text-gray-400 mb-2">القصة الكاملة (تظهر في صفحة دراسة الحالة)</label>
                   <Textarea value={study.story || ""} onChange={(e) => updateCaseStudy(idx, 'story', e.target.value)} dir="rtl" className="bg-card/50 min-h-32" />
+                </div>
+
+                {/* Metrics / Stats Editing */}
+                <div className="mb-4">
+                  <label className="block text-sm text-gray-400 mb-3 flex items-center gap-2 justify-end">
+                    <span>الإحصائيات (تظهر في صفحة دراسة الحالة)</span>
+                    📊
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {(study.metrics || defaultCaseStudies[idx]?.metrics || []).map((metric: any, mIdx: number) => (
+                      <div key={mIdx} className="bg-card/40 border border-white/10 rounded-xl p-4 space-y-3">
+                        <div className="text-center">
+                          <span className="text-[10px] text-muted-foreground/60 font-medium">إحصائية {mIdx + 1}</span>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] text-gray-500 mb-1">القيمة</label>
+                          <Input 
+                            value={metric.value || ""} 
+                            onChange={(e) => updateCaseStudyMetric(idx, mIdx, 'value', e.target.value)} 
+                            dir="rtl" 
+                            className="bg-card/50 text-center font-bold text-primary"
+                            placeholder="مثال: +145%"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[11px] text-gray-500 mb-1">التسمية</label>
+                          <Input 
+                            value={metric.label || ""} 
+                            onChange={(e) => updateCaseStudyMetric(idx, mIdx, 'label', e.target.value)} 
+                            dir="rtl" 
+                            className="bg-card/50 text-center text-sm"
+                            placeholder="مثال: ارتفاع معدل النقر"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}

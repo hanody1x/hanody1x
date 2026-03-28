@@ -40,8 +40,12 @@ export default function CaseStudy() {
 
           <div className="glass-panel rounded-3xl p-8 md:p-12 mb-8">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-xl font-black">
-                {study.avatarInitials}
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center text-white text-xl font-black overflow-hidden">
+                {(study as any).avatarImage ? (
+                  <img src={(study as any).avatarImage} alt={study.name} className="w-full h-full object-cover" />
+                ) : (
+                  study.avatarInitials
+                )}
               </div>
               <div>
                 <h1 className="text-2xl font-black text-foreground">{study.name}</h1>
