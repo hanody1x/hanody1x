@@ -30,6 +30,15 @@ export const contactMessages = sqliteTable("contact_messages", {
 export const insertAdminSchema = createInsertSchema(adminUsers).omit({ id: true, createdAt: true });
 export const insertMessageSchema = createInsertSchema(contactMessages).omit({ id: true, read: true, createdAt: true });
 
+export const loginLogs = sqliteTable("login_logs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  username: text("username").notNull(),
+  ipAddress: text("ip_address"),
+  success: integer("success", { mode: "boolean" }).notNull(),
+  attemptedAt: integer("attempted_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+});
+
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type SiteContent = typeof siteContent.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
+export type LoginLog = typeof loginLogs.$inferSelect;

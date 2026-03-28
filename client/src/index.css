@@ -568,7 +568,7 @@ html {
   align-items: center;
   transition: all 0.4s ease-out;
   transform: rotate(90deg) scale(-1);
-  overflow: hidden;
+  overflow: visible;
 }
 .chipmunk-card:hover .chipmunk-second {
   opacity: 1;
@@ -604,19 +604,11 @@ html {
   border-color: transparent;
 }
 
-.social-icon-instagram:hover {
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-  box-shadow: 0 0 20px rgba(225, 48, 108, 0.5);
-}
-
-.social-icon-linkedin:hover {
-  background-color: #0072b1;
-  box-shadow: 0 0 20px rgba(0, 114, 177, 0.5);
-}
-
+.social-icon-instagram:hover,
+.social-icon-linkedin:hover,
 .social-icon-whatsapp:hover {
-  background-color: #25D366;
-  box-shadow: 0 0 20px rgba(37, 211, 102, 0.5);
+  background-color: hsl(var(--primary));
+  box-shadow: 0 0 20px hsla(var(--primary) / 0.5);
 }
 
 .social-icon-svg {
@@ -653,4 +645,202 @@ html {
 
 :root:not(.dark) .pricing-wave-card {
   background: rgba(30, 41, 59, 0.95);
+}
+
+/* UIverse Components */
+.continue-application {
+  --color: #fff;
+  --background: hsl(var(--primary));
+  --background-hover: hsl(var(--primary) / 0.9);
+  --background-left: hsl(var(--primary) / 0.8);
+  --folder: #f3e9cb;
+  --folder-inner: #beb393;
+  --paper: #ffffff;
+  --paper-lines: #bbc1e1;
+  --paper-behind: #e1e6f9;
+  --pencil-cap: #fff;
+  --pencil-top: #275efe;
+  --pencil-middle: #fff;
+  --pencil-bottom: #5c86ff;
+  --shadow: rgba(13, 15, 25, .2);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 19px;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 24px 29px 24px 80px;
+  transition: background 0.3s;
+  color: var(--color);
+  background: var(--bg, var(--background));
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.continue-application > div {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 70px;
+  position: absolute;
+  z-index: 1;
+  border-radius: 16px 0 0 16px;
+  background: var(--background-left);
+}
+
+.continue-application > div .pencil {
+  width: 18px;
+  height: 3px;
+  border-radius: 1px 1px 0 0;
+  top: 32px;
+  left: 19px;
+  position: absolute;
+  z-index: 3;
+  transform-origin: 50% 19px;
+  background: var(--pencil-cap);
+  transform: translateX(var(--px, 0)) rotate(var(--pr, 0deg));
+  transition: transform 0.4s var(--pde, 0.15s);
+}
+
+.continue-application > div .pencil:before,
+.continue-application > div .pencil:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.continue-application > div .pencil:before {
+  top: 3px;
+  height: 11px;
+  background: var(--pencil-top);
+}
+
+.continue-application > div .pencil:after {
+  top: 14px;
+  height: 3px;
+  background: var(--pencil-middle);
+}
+
+.continue-application > div .folder {
+  width: 30px;
+  height: 27px;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  z-index: 1;
+  transform: translateX(var(--fx, 0));
+  transition: transform 0.4s var(--fde, 0.45s);
+}
+
+.continue-application > div .folder:before,
+.continue-application > div .folder:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--folder);
+  border-radius: 4px;
+}
+
+.continue-application > div .folder:after {
+  background: var(--folder-inner);
+  transform: skewY(var(--fr, 0deg));
+  transition: transform 0.4s var(--fde, 0.45s);
+}
+
+.continue-application > div .folder .top {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 2px;
+  right: 2px;
+  height: 13px;
+  z-index: 3;
+  opacity: var(--fo, 0);
+  transition: opacity 0.4s var(--fde, 0.45s);
+}
+
+.continue-application > div .folder .top svg {
+  width: 24px;
+  height: 27px;
+  display: block;
+  fill: var(--folder);
+}
+
+.continue-application > div .folder .paper {
+  width: 14px;
+  height: 18px;
+  position: absolute;
+  left: 7px;
+  top: -12px;
+  z-index: 2;
+  border-radius: 2px;
+  background: var(--paper);
+  transform: translateY(var(--py, 0));
+  transition: transform 0.4s var(--pde, 0.1s);
+}
+
+.continue-application > div .folder .paper:before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 8px;
+  height: 1px;
+  background: var(--paper-lines);
+  box-shadow: 0 3px 0 var(--paper-lines), 0 6px 0 var(--paper-lines), 0 9px 0 var(--paper-lines);
+}
+
+.continue-application:hover {
+  --px: 2px;
+  --pr: -60deg;
+  --pde: 0s;
+  --fx: 60px;
+  --fr: -60deg;
+  --fde: .15s;
+  --fo: 1;
+  --py: 2px;
+  --bg: var(--background-hover);
+}
+
+/* Loading Screen Logo */
+.loader-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: hsl(var(--background));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-container {
+  width: 16rem;
+  height: 16rem;
+}
+
+.loader-container path {
+  stroke: hsl(var(--primary));
+  stroke-width: 0.8px;
+  animation: svgDashArray 4s ease-in-out infinite, svgDashOffset 4s linear infinite;
+}
+
+@keyframes svgDashArray {
+  0% { stroke-dasharray: 0 1 359 0; }
+  50% { stroke-dasharray: 0 359 1 0; }
+  100% { stroke-dasharray: 359 1 0 0; }
+}
+
+@keyframes svgDashOffset {
+  0% { stroke-dashoffset: 365; }
+  100% { stroke-dashoffset: 5; }
 }

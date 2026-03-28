@@ -2,9 +2,9 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "../lib/db.js";
-import { adminUsers } from "../schema/index.js";
+import { adminUsers, loginLogs } from "../schema/index.js";
 import { signToken, requireAuth } from "../lib/auth.js";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
 
 const router = Router();
@@ -21,21 +21,25 @@ const loginLimiter = rateLimit({
 });
 
 router.post("/login", loginLimiter, async (req, res) => {
+  const ipAddress = req.ip || req.socket.remoteAddress || "unknown";
   try {
     const { username, password } = loginSchema.parse(req.body);
     const [user] = await db.select().from(adminUsers).where(eq(adminUsers.username, username));
 
     if (!user) {
+      await db.insert(loginLogs).values({ username, ipAddress, success: false });
       res.status(401).json({ message: "اسم المستخدم أو كلمة المرور غير صحيحة" });
       return;
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
+      await db.insert(loginLogs).values({ username, ipAddress, success: false });
       res.status(401).json({ message: "اسم المستخدم أو كلمة المرور غير صحيحة" });
       return;
     }
 
+    await db.insert(loginLogs).values({ username, ipAddress, success: true });
     const token = signToken({ id: user.id, username: user.username });
     res.json({ token, username: user.username });
   } catch (err) {
@@ -51,6 +55,16 @@ router.post("/login", loginLimiter, async (req, res) => {
 router.get("/me", requireAuth, (req, res) => {
   const admin = (req as typeof req & { admin: { id: number; username: string } }).admin;
   res.json({ id: admin.id, username: admin.username });
+});
+
+router.get("/logs", requireAuth, async (req, res) => {
+  try {
+    const logs = await db.select().from(loginLogs).orderBy(desc(loginLogs.attemptedAt)).limit(100);
+    res.json(logs);
+  } catch (err) {
+    console.error("Failed to fetch logs:", err);
+    res.status(500).json({ message: "فشل في جلب سجلات الدخول" });
+  }
 });
 
 export default router;

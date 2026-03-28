@@ -80,7 +80,7 @@ export function Navbar() {
           </Button>
         </nav>
 
-        <Link href="/admin" className="text-sm font-semibold text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 px-4 py-2 rounded-xl transition-all border border-border md:mr-4">
+        <Link href="/admin" className="text-xs md:text-sm font-semibold text-foreground/70 hover:text-foreground bg-foreground/5 hover:bg-foreground/10 px-3 py-1.5 md:px-4 md:py-2 rounded-xl transition-all border border-border md:mr-4 whitespace-nowrap">
           لوحة التحكم
         </Link>
         
