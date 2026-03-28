@@ -346,55 +346,74 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                 </div>
               )}
 
-              <div className={`pricing-wave-card playing relative overflow-hidden rounded-3xl h-full flex flex-col ${pkg.popular ? "shadow-[0_8px_40px_rgba(59,130,246,0.4)] ring-2 ring-primary/50" : "shadow-[0_8px_28px_-9px_rgba(0,0,0,0.45)]"}`}>
+              <div className={`pricing-wave-card chipmunk-card playing relative overflow-hidden rounded-3xl h-full flex flex-col ${pkg.popular ? "shadow-[0_8px_40px_rgba(59,130,246,0.4)] ring-2 ring-primary/50" : "shadow-[0_8px_28px_-9px_rgba(0,0,0,0.45)]"}`}>
                 {/* Wave background */}
                 <div className="pricing-wave" style={{ background: waveGradient }} />
                 <div className="pricing-wave" style={{ background: waveGradient }} />
                 <div className="pricing-wave" style={{ background: waveGradient }} />
                 
                 {/* Content */}
-                <div className="relative z-10 p-8 flex flex-col h-full">
-                  <div className="text-right mb-2">
-                    <h3 className="text-2xl font-bold tracking-tight text-white">{pkg.name}</h3>
-                    {pkg.popular && <p className="text-xs text-blue-200 font-semibold mt-0.5">الخيار الأمثل للمحترفين</p>}
-                  </div>
-
-                  <div className="flex flex-col items-end gap-1 mb-8">
-                    {isDiscountActive && (
-                      <span className="text-xl text-white/50 line-through decoration-red-400/70 font-semibold mb-[-4px]">
-                        ${pkg.price}
-                      </span>
-                    )}
-                    <div className="flex items-baseline gap-1 justify-end">
-                      <span className="text-sm font-medium text-white/70">/لكل صورة</span>
-                      <span className="text-5xl font-black text-white drop-shadow-lg">
-                        ${isDiscountActive ? (parseFloat(pkg.price) * 0.8).toFixed(0) : pkg.price}
-                      </span>
+                <div className="relative z-10 p-8 flex flex-col h-full w-full">
+                  <div className="chipmunk-first">
+                    <div className="text-right mb-2">
+                      <h3 className="text-2xl font-bold tracking-tight text-white">{pkg.name}</h3>
+                      {pkg.popular && <p className="text-xs text-blue-200 font-semibold mt-0.5">الخيار الأمثل للمحترفين</p>}
                     </div>
+
+                    <div className="flex flex-col items-end gap-1 mb-8">
+                      {isDiscountActive && (
+                        <span className="text-xl text-white/50 line-through decoration-red-400/70 font-semibold mb-[-4px]">
+                          ${pkg.price}
+                        </span>
+                      )}
+                      <div className="flex items-baseline gap-1 justify-end">
+                        <span className="text-sm font-medium text-white/70">/لكل صورة</span>
+                        <span className="text-5xl font-black text-white drop-shadow-lg">
+                          ${isDiscountActive ? (parseFloat(pkg.price) * 0.8).toFixed(0) : pkg.price}
+                        </span>
+                      </div>
+                    </div>
+
+                    <ul className="space-y-4 mb-10 flex-grow">
+                      {pkg.features.map((feat: string) => (
+                        <li key={feat} className="flex items-center gap-3 text-sm justify-end">
+                          <span className="font-medium text-white/90">{feat}</span>
+                          <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 bg-white/20">
+                            <CheckCircle2 size={14} className="text-white" />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button
+                      onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
+                      className={`w-full rounded-2xl py-7 text-lg font-bold transition-all ripple-host ${
+                        pkg.popular
+                          ? "bg-white text-primary shadow-[0_4px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_4px_40px_rgba(255,255,255,0.5)] hover:scale-[1.02]"
+                          : "bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30"
+                      }`}
+                    >
+                      {pkg.popular && <Sparkles size={16} className="ml-2 inline" />}
+                      اختر {pkg.name}
+                    </Button>
                   </div>
 
-                  <ul className="space-y-4 mb-10 flex-grow">
-                    {pkg.features.map((feat: string) => (
-                      <li key={feat} className="flex items-center gap-3 text-sm justify-end">
-                        <span className="font-medium text-white/90">{feat}</span>
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 bg-white/20">
-                          <CheckCircle2 size={14} className="text-white" />
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
-                    className={`w-full rounded-2xl py-7 text-lg font-bold transition-all ripple-host ${
-                      pkg.popular
-                        ? "bg-white text-primary shadow-[0_4px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_4px_40px_rgba(255,255,255,0.5)] hover:scale-[1.02]"
-                        : "bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30"
-                    }`}
-                  >
-                    {pkg.popular && <Sparkles size={16} className="ml-2 inline" />}
-                    اختر {pkg.name}
-                  </Button>
+                  <div className="chipmunk-second">
+                    <Sparkles size={48} className={`mb-6 ${pkg.popular ? "text-white drop-shadow-lg" : "text-primary drop-shadow-lg"}`} />
+                    <h4 className="text-3xl font-black text-white text-center mb-8 drop-shadow-md">
+                      استثمر في قناتك<br/>مع باقة {pkg.name}
+                    </h4>
+                    <Button
+                      onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
+                      className={`w-full rounded-2xl py-8 text-xl font-black transition-all ripple-host ${
+                        pkg.popular
+                          ? "bg-white text-primary shadow-[0_4px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_4px_40px_rgba(255,255,255,0.5)] hover:scale-[1.05]"
+                          : "bg-primary text-white shadow-[0_4px_30px_rgba(59,130,246,0.3)] hover:shadow-[0_4px_40px_rgba(59,130,246,0.5)] hover:scale-[1.05]"
+                      }`}
+                    >
+                      اطلب الباقة الآن
+                    </Button>
+                  </div>
                 </div>
               </div>
             </motion.div>

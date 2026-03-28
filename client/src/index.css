@@ -304,6 +304,201 @@ html {
   height: 700px;
   opacity: 0.6;
   left: 0;
+  --input: 220 15% 15%;
+  --ring: 217 91% 55%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground overflow-x-hidden selection:bg-primary/30 selection:text-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-foreground;
+  }
+}
+
+.glow-text {
+  text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+}
+
+.glow-box {
+  box-shadow: 0 0 40px -10px hsl(var(--primary) / 0.3);
+}
+
+.glass-panel {
+  @apply bg-card/40 backdrop-blur-xl border border-white/5;
+}
+
+:root:not(.dark) .glass-panel {
+  @apply bg-card/80 border-gray-200;
+}
+
+.glass-card {
+  @apply bg-card/50 backdrop-blur-md border border-white/10;
+}
+
+:root:not(.dark) .glass-card {
+  @apply bg-card/80 border-gray-200;
+}
+
+.text-white-keep {
+  color: #ffffff !important;
+}
+
+/* Light mode: make hardcoded text-white readable */
+:root:not(.dark) .text-adaptive {
+  color: hsl(var(--foreground)) !important;
+}
+
+.bg-mesh {
+  background-image: 
+    radial-gradient(at 40% 20%, hsl(var(--primary) / 0.15) 0px, transparent 50%),
+    radial-gradient(at 80% 0%, hsl(var(--secondary) / 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 50%, hsl(var(--primary) / 0.1) 0px, transparent 50%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes orb-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+.animate-orb-pulse {
+  animation: orb-pulse 6s ease-in-out infinite;
+}
+
+.ripple-host {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(0);
+  animation: ripple-anim 0.7s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple-anim {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Theme Switch Uiverse Honest Stingray 90 */
+.theme-toggle {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 64px;
+  height: 34px;
+  transform: scale(0.9);
+}
+
+.theme-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-toggle .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #73C0FC;
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.theme-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 30px;
+  width: 30px;
+  border-radius: 20px;
+  left: 2px;
+  bottom: 2px;
+  z-index: 2;
+  background-color: #e8e8e8;
+  transition: .4s;
+}
+
+.theme-toggle .sun svg {
+  position: absolute;
+  top: 6px;
+  left: 36px;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+}
+
+.theme-toggle .moon svg {
+  fill: #73C0FC;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+}
+
+.theme-toggle-input:checked + .slider {
+  background-color: #183153;
+}
+
+.theme-toggle-input:focus + .slider {
+  box-shadow: 0 0 1px #183153;
+}
+
+.theme-toggle-input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+.theme-toggle-input:checked + .slider .sun svg {
+  opacity: 0;
+}
+
+.theme-toggle-input:checked + .slider .moon svg {
+  opacity: 1;
+}
+
+.theme-toggle .sun svg {
+  opacity: 1;
+  transition: .4s;
+}
+
+.theme-toggle .moon svg {
+  opacity: 0;
+  transition: .4s;
+}
+
+/* Pricing Wave Cards (Uiverse Fast Octopus 78) */
+.pricing-wave-card {
+  background: rgba(10, 10, 20, 0.95);
+  position: relative;
+  min-height: 480px;
+}
+
+.pricing-wave {
+  position: absolute;
+  width: 540px;
+  height: 700px;
+  opacity: 0.6;
+  left: 0;
   top: 0;
   margin-left: -50%;
   margin-top: -70%;
@@ -336,6 +531,49 @@ html {
 @keyframes pricing-wave-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Pricing Chipmunk Animation (Uiverse cold-chipmunk-47) */
+.chipmunk-card {
+  transition: all 0.4s ease-out;
+}
+.chipmunk-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 0px 30px 10px rgba(59, 130, 246, 0.4) !important;
+}
+
+.chipmunk-first {
+  height: 100%;
+  width: 100%;
+  transition: all 0.4s ease-out;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+}
+.chipmunk-card:hover .chipmunk-first {
+  height: 0px;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.chipmunk-second {
+  height: 0%;
+  width: 100%;
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.4s ease-out;
+  transform: rotate(90deg) scale(-1);
+  overflow: hidden;
+}
+.chipmunk-card:hover .chipmunk-second {
+  opacity: 1;
+  height: 100%;
+  transform: rotate(0deg);
 }
 
 /* Social Media Icons (Uiverse Loud Chicken 59) */
