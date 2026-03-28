@@ -54,6 +54,23 @@ app.get("*catchall", (_req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+
+  // Set up an automatic self-ping mechanism to keep the server awake on Render free tier
+  const RENDER_EXTERNAL_URL = process.env.RENDER_EXTERNAL_URL;
+  if (RENDER_EXTERNAL_URL) {
+    setInterval(async () => {
+      try {
+        const res = await fetch(`${RENDER_EXTERNAL_URL}/api/healthz`);
+        if (res.ok) {
+          console.log(`[Keep-Alive] Self-ping successful: ${RENDER_EXTERNAL_URL}`);
+        } else {
+          console.error(`[Keep-Alive] Self-ping failed with status: ${res.status}`);
+        }
+      } catch (error) {
+        console.error("[Keep-Alive] Self-ping error:", error);
+      }
+    }, 8 * 60 * 1000); // Trigger every 8 minutes (Render sleeps after 15 mins)
+  }
 });
 
 export default app;
