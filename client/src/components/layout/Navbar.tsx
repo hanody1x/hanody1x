@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useSection } from "@/hooks/useContent";
 
 export function Navbar() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [isDark, setIsDark] = useState(true);
   const [location] = useLocation();
+  const brand = useSection("brand", { logoLetter: "H", logoImage: "" } as any);
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains("dark"));
@@ -55,8 +57,12 @@ export function Navbar() {
         <div className="flex items-center justify-between w-full sm:w-auto gap-0 sm:gap-1 min-w-max px-0.5">
           {/* Close/Icon on the right side in RTL (start) */}
           <Link href="/">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full bg-[#2c2c2e] border border-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors cursor-pointer mr-0 sm:mr-1">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-full bg-[#2c2c2e] border border-white/5 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors cursor-pointer mr-0 sm:mr-1 overflow-hidden">
+              {brand?.logoImage ? (
+                <img src={brand.logoImage} alt="Logo" className="w-full h-full object-cover" />
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              )}
             </div>
           </Link>
 

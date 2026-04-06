@@ -880,7 +880,7 @@ function HowItWorks() {
 
 const defaultAbout = {
   title: "مصمم متخصص في يوتيوب",
-  bio1: 'أنا Hanody1x، مصمم جرافيك متخصص في صور مصغرة يوتيوب. أعمل مع يوتيوبرز عرب وعالميين لتحويل أفكارهم إلى صور مصغرة تُوقف التمرير وتُضاعف المشاهدات.',
+  bio1: 'أنا مهند، مصمم جرافيك متخصص في صور مصغرة يوتيوب. أعمل مع يوتيوبرز عرب وعالميين لتحويل أفكارهم إلى صور مصغرة تُوقف التمرير وتُضاعف المشاهدات.',
   bio2: "فلسفتي بسيطة: الصورة المصغرة الجيدة لا تبدو جميلة فحسب — بل تعمل. كل تصميم أقدمه مبني على فهم عميق لعلم النفس البصري وخوارزميات يوتيوب.",
   badge1: "+50 يوتيوبر",
   badge2: "+120% CTR",
@@ -919,7 +919,7 @@ function About() {
                         "H"
                       )}
                     </div>
-                    <p className="text-foreground font-black text-2xl tracking-tighter">Hanody1x</p>
+                    <p className="text-foreground font-black text-2xl tracking-tighter">{brand.name || "مهند"}</p>
                     <p className="text-primary text-sm font-semibold mt-1">مصمم صور مصغرة</p>
                   </div>
                 </div>
@@ -1084,10 +1084,10 @@ function SpecialOffer({
             <button
               onClick={() => onActivateDiscount && onActivateDiscount()}
               disabled={isDiscountActive}
-              className={`inline-flex items-center justify-center gap-3 border rounded-2xl px-10 py-5 mb-8 transition-all font-black text-xl lg:text-2xl ${
+              className={`inline-flex items-center justify-center gap-3 rounded-2xl px-10 py-5 mb-8 transition-all font-black text-xl lg:text-2xl ${
                 isDiscountActive 
-                  ? "bg-green-500/20 border-green-500/50 text-green-400 cursor-default"
-                  : "bg-primary/20 border-primary/50 text-foreground hover:bg-primary/40 hover:scale-105 shadow-[0_0_30px_rgba(59,130,246,0.5)]"
+                  ? "bg-green-500/20 border border-green-500/50 text-green-400 cursor-default"
+                  : "bg-primary text-white hover:bg-primary/90 hover:scale-105 shadow-[0_0_30px_rgba(59,130,246,0.5)] border-0"
               }`}
             >
               {isDiscountActive ? "تم تفعيل الخصم بنجاح ✓" : "تفعيل الخصم 20% الآن"}
