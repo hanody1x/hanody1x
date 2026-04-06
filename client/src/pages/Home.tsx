@@ -121,11 +121,7 @@ function Hero() {
           className="parallax-orb absolute top-1/3 -right-1/4 w-[40vw] h-[40vw] bg-secondary/20 rounded-full blur-[120px] mix-blend-screen animate-orb-pulse"
           initial={false}
         />
-        <img 
-          src={`${import.meta.env.BASE_URL}images/hero-bg.png`} 
-          alt="خلفية سينمائية" 
-          className="absolute inset-0 w-full h-full object-cover opacity-10"
-        />
+        {/* Cinematic background removed as requested */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/0 via-background/50 to-background" />
       </div>
 
@@ -389,7 +385,7 @@ function Pricing({ isDiscountActive }: { isDiscountActive?: boolean }) {
                       onClick={(e) => { addRipple(e); document.getElementById("order")?.scrollIntoView({ behavior: "smooth" }); }}
                       className={`w-full rounded-2xl py-7 text-lg font-bold transition-all ripple-host ${
                         pkg.popular
-                          ? "bg-white text-primary shadow-[0_4px_30px_rgba(255,255,255,0.3)] hover:shadow-[0_4px_40px_rgba(255,255,255,0.5)] hover:scale-[1.02]"
+                          ? "bg-white text-primary shadow-[0_4px_30px_rgba(255,255,255,0.3)] hover:bg-primary hover:text-white hover:shadow-[0_4px_40px_rgba(59,130,246,0.5)] hover:scale-[1.02]"
                           : "bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30"
                       }`}
                     >
@@ -1126,9 +1122,22 @@ function SpecialOffer({
 
 function StickyOrderButton() {
   const [visible, setVisible] = useState(false);
+  const [bottomOffset, setBottomOffset] = useState(24);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 400);
+    const onScroll = () => {
+      setVisible(window.scrollY > 400);
+      const scrollHeight = document.documentElement.scrollHeight;
+      const scrollPosition = window.innerHeight + window.scrollY;
+      const distanceFromBottom = scrollHeight - scrollPosition;
+      
+      // Stop before the footer (around 320px from bottom)
+      if (distanceFromBottom < 340) {
+        setBottomOffset(24 + (340 - distanceFromBottom));
+      } else {
+        setBottomOffset(24);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -1139,11 +1148,12 @@ function StickyOrderButton() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          initial={{ opacity: 0, y: 80, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 80, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.4, ease: easeApple }}
-          className="fixed bottom-6 left-6 z-50 flex flex-col gap-3"
+          style={{ bottom: `${bottomOffset}px` }}
+          className="fixed left-6 z-50 flex flex-col gap-3"
         >
           <a
             href={whatsappUrl}
