@@ -201,15 +201,49 @@ export default function AdminDashboard() {
     }
   }
 
+  async function replaceImage(e: React.ChangeEvent<HTMLInputElement>, oldUrl: string) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const filename = oldUrl.split("/").pop();
+      const publicId = filename?.split(".")[0];
+      
+      const fd = new FormData();
+      if (publicId) fd.append("publicId", publicId);
+      fd.append("image", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      if (res.ok) {
+        await fetchImages();
+        toast({ title: "تم استبدال الصورة بنجاح" });
+      } else {
+        const errorData = await res.json().catch(() => ({ message: "خطأ غير معروف" }));
+        toast({ title: "خطأ في الاستبدال", description: errorData.message, variant: "destructive" });
+      }
+    } catch {
+      toast({ title: "خطأ في الاستبدال", description: "تعذر الاتصال بالخادم", variant: "destructive" });
+    }
+  }
+
   async function deleteImage(url: string) {
-    const filename = url.split("/").pop();
-    const res = await fetch(`/api/upload/${filename}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      await fetchImages();
-      toast({ title: "تم حذف الصورة" });
+    try {
+      const filename = url.split("/").pop();
+      const res = await fetch(`/api/upload/${filename}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        await fetchImages();
+        toast({ title: "تم حذف الصورة" });
+      } else {
+        toast({ title: "خطأ في حذف الملف من الخادم", variant: "destructive" });
+      }
+    } catch (err) {
+      toast({ title: "خطأ في الاتصال بالخادم", variant: "destructive" });
     }
   }
 
@@ -580,12 +614,19 @@ export default function AdminDashboard() {
               {images.map((url) => (
                 <div key={url} className="relative group cursor-pointer" onClick={() => { navigator.clipboard?.writeText(url); toast({ title: "تم نسخ الرابط" }); }}>
                   <img src={url} alt="" className="w-full aspect-video object-cover rounded-xl" />
-                  <button
-                    onClick={(e) => { e.stopPropagation(); deleteImage(url); }}
-                    className="absolute top-2 right-2 w-8 h-8 bg-destructive/80 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <Trash2 className="w-4 h-4 text-white" />
-                  </button>
+                  <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <label className="w-8 h-8 bg-blue-500/90 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-600 transition" title="استبدال الصورة">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21v-5h5"/></svg>
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => replaceImage(e, url)} />
+                    </label>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); deleteImage(url); }}
+                      className="w-8 h-8 bg-destructive/90 rounded-lg flex items-center justify-center hover:bg-destructive transition"
+                      title="حذف الصورة"
+                    >
+                      <Trash2 className="w-4 h-4 text-white" />
+                    </button>
+                  </div>
                   <div className="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[10px] p-1 text-center opacity-0 group-hover:opacity-100 transition-opacity rounded-b-xl pointer-events-none">
                     اضغط لنسخ الرابط
                   </div>

@@ -19,11 +19,14 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (_req: any, file: any) => {
     const extension = file.originalname.split(".").pop();
+    const publicId = _req.body.publicId || `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
     return {
       folder: "portfolio",
       format: extension, // supports 'jpg', 'png', etc.
-      public_id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-    };
+      public_id: publicId,
+      overwrite: true,
+      invalidate: true,
+    } as any;
   },
 });
 
@@ -59,14 +62,15 @@ router.post("/", requireAuth, (req, res, next) => {
   });
 });
 
-// Optional: Delete from Cloudinary (using public_id)
-// router.delete("/:publicId", requireAuth, async (req, res) => {
-//   try {
-//     await cloudinary.uploader.destroy(`portfolio/${req.params.publicId}`);
-//     res.json({ success: true });
-//   } catch (error) {
-//     res.status(500).json({ message: "خطأ في حذف الملف" });
-//   }
-// });
+router.delete("/:publicId", requireAuth, async (req, res) => {
+  try {
+    const publicIdWithExt = req.params.publicId as string;
+    const publicId = publicIdWithExt.split(".")[0];
+    await cloudinary.uploader.destroy(`portfolio/${publicId}`, { invalidate: true });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: "خطأ في حذف الملف" });
+  }
+});
 
 export default router;
