@@ -39,7 +39,7 @@ export function Navbar() {
     { name: "الخدمات", id: "services", mobileHidden: false },
     { name: "قصص النجاح", id: "showcase", mobileHidden: false },
     { name: "معرض الأعمال", id: "portfolio", mobileHidden: false },
-    { name: "لوحة التحكم", href: "/admin", mobileHidden: true },
+    { name: "لوحة التحكم", href: "/admin", mobileHidden: false },
   ];
 
   return (
@@ -86,7 +86,7 @@ export function Navbar() {
                     transition={{ duration: 0.25, ease: "easeInOut" }}
                   />
                 )}
-                <span className={`relative z-10 text-[10px] sm:text-[14px] font-semibold transition-colors duration-200 whitespace-nowrap ${hoveredIdx === idx ? 'text-white' : 'text-gray-400'}`}>
+                <span className={`relative z-10 text-[9px] sm:text-[14px] font-semibold transition-colors duration-200 whitespace-nowrap ${hoveredIdx === idx ? 'text-white' : 'text-gray-400'}`}>
                   {link.name}
                 </span>
               </div>
