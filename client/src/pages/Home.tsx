@@ -154,13 +154,13 @@ function Hero() {
               transition={{ duration: 0.6, delay: 0.1, ease: easeApple }}
               className="inline-flex lg:hidden items-center gap-3 px-5 py-2.5 rounded-2xl glass-card mb-5 border border-white/10 hover:border-white/25 hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-foreground">
                 <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
                 <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
               </svg>
-              <span className="text-sm font-bold text-white group-hover:text-white/80 transition-colors">تابعني على إنستجرام</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 group-hover:opacity-80 group-hover:-translate-x-1 transition-all duration-300">
+              <span className="text-sm font-bold text-foreground group-hover:opacity-80 transition-opacity">تابعني على إنستجرام</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 text-foreground group-hover:opacity-80 group-hover:-translate-x-1 transition-all duration-300">
                 <path d="m15 18-6-6 6-6"/>
               </svg>
             </motion.a>

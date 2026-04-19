@@ -109,6 +109,43 @@ router.patch("/clients/:id/clear", async (req, res) => {
   }
 });
 
+router.patch("/clients/:id/set-orders", async (req, res) => {
+  // Manually set the number of completed orders
+  try {
+    const clientId = parseInt(req.params.id);
+    const { ordersCompleted } = req.body;
+    
+    if (ordersCompleted === undefined || isNaN(parseInt(ordersCompleted))) {
+        return res.status(400).json({ error: "ordersCompleted is required" });
+    }
+
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Client not found" });
+
+    const [updatedClient] = await db.update(clients).set({
+      ordersCompleted: parseInt(ordersCompleted),
+      updatedAt: new Date()
+    }).where(eq(clients.id, clientId)).returning();
+
+    res.json(updatedClient);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.delete("/clients/:id", async (req, res) => {
+  try {
+    const clientId = parseInt(req.params.id);
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Client not found" });
+
+    await db.delete(clients).where(eq(clients.id, clientId));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // =======================
 // Time Sessions
 // =======================

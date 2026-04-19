@@ -339,6 +339,37 @@ export default function AdminDashboard() {
     } catch(e) {}
   };
 
+  const handleEditOrderCount = async (clientId: number, currentOrders: number) => {
+    const newCountStr = prompt("أدخل العدد الصحيح للصور المنجزة:", currentOrders.toString());
+    if (newCountStr === null) return;
+    const newCount = parseInt(newCountStr);
+    if (isNaN(newCount) || newCount < 0) { toast({ title: "قيمة غير صالحة", variant: "destructive" }); return; }
+    
+    try {
+      const res = await fetch(`/api/dashboard/clients/${clientId}/set-orders`, {
+        method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ ordersCompleted: newCount })
+      });
+      if (res.ok) {
+        toast({ title: "تم التعديل بنجاح" });
+        fetchDashboardData();
+      }
+    } catch(e) {}
+  };
+
+  const handleDeleteClient = async (clientId: number) => {
+    if (!confirm("هل أنت متأكد من حذف هذا العميل تماماً؟ سيتم مسح كافة سجلاته.")) return;
+    try {
+      const res = await fetch(`/api/dashboard/clients/${clientId}`, {
+        method: "DELETE", headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        toast({ title: "تم حذف العميل" });
+        fetchDashboardData();
+      }
+    } catch(e) {}
+  };
+
   if (!isAuthenticated) return null;
 
   return (
@@ -355,7 +386,7 @@ export default function AdminDashboard() {
             )}
           </div>
           <h2 className="text-sm text-muted-foreground font-medium">إعدادات الحساب</h2>
-          <h1 className="text-xl font-black text-foreground">Admin</h1>
+          <h1 className="text-xl font-black text-foreground">مهند</h1>
         </div>
 
         <nav className="flex-1 flex flex-col gap-3">
@@ -387,7 +418,7 @@ export default function AdminDashboard() {
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <div>
-            <h1 className="text-3xl font-black text-foreground mb-1">مرحباً بعودتك، <span className="text-primary">Admin</span> 👋</h1>
+            <h1 className="text-3xl font-black text-foreground mb-1">مرحباً بعودتك، <span className="text-primary">مهند</span> 👋</h1>
             <p className="text-muted-foreground">إليك نظرة عامة على أعمالك وإحصائياتك اليوم.</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/")} className="border-border rounded-xl text-primary hover:text-primary/80 shrink-0">
@@ -551,7 +582,10 @@ export default function AdminDashboard() {
                         <div>
                           <h3 className="font-bold text-lg text-foreground">{client.name}</h3>
                           <div className="flex gap-3 text-sm text-muted-foreground">
-                            <span>الصور المنجزة: <strong className="text-foreground">{client.ordersCompleted}</strong></span>
+                            <span className="flex items-center gap-2">
+                              الصور المنجزة: <strong className="text-foreground">{client.ordersCompleted}</strong>
+                              <button onClick={() => handleEditOrderCount(client.id, client.ordersCompleted)} className="text-primary hover:text-primary/70 text-xs underline">تعديل</button>
+                            </span>
                             <span>|</span>
                             <span>الديون المستحقة: <strong className="text-orange-400">${client.balance}</strong></span>
                           </div>
@@ -574,6 +608,15 @@ export default function AdminDashboard() {
                           disabled={client.balance === 0}
                         >
                           {client.balance === 0 ? <><CheckCircle className="w-4 h-4 ml-1" /> أرصدة خالصة</> : "تصفير الحساب"}
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="destructive"
+                          onClick={() => handleDeleteClient(client.id)}
+                          className="text-xs rounded-xl font-bold w-10 p-0"
+                          title="حذف العميل"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
