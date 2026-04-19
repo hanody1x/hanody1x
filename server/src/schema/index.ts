@@ -39,7 +39,29 @@ export const loginLogs = sqliteTable("login_logs", {
   attemptedAt: integer("attempted_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
 });
 
+export const clients = sqliteTable("clients", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  status: text("status").notNull().default("جديد"), // e.g. "جديد", "حالي", "مكتمل"
+  balance: integer("balance").notNull().default(0),
+  ordersCompleted: integer("orders_completed").notNull().default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+});
+
+export const timeSessions = sqliteTable("time_sessions", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  title: text("title").notNull().default("جلسة عمل بدون اسم"),
+  durationSeconds: integer("duration_seconds").notNull().default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+});
+
+export const insertClientSchema = createInsertSchema(clients).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertTimeSessionSchema = createInsertSchema(timeSessions).omit({ id: true, createdAt: true });
+
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type SiteContent = typeof siteContent.$inferSelect;
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type LoginLog = typeof loginLogs.$inferSelect;
+export type Client = typeof clients.$inferSelect;
+export type TimeSession = typeof timeSessions.$inferSelect;
