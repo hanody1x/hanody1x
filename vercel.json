@@ -1,16 +1,10 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "cd client && npm install --legacy-peer-deps && npm run build",
   "outputDirectory": "client/dist",
-  "framework": null,
+  "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api" },
-    { "source": "/uploads/(.*)", "destination": "/api" },
-    { "source": "/((?!api|uploads|assets|favicon|_next).*)", "destination": "/index.html" }
-  ],
-  "functions": {
-    "api/index.mjs": {
-      "memory": 256,
-      "maxDuration": 30
-    }
-  }
+    { "source": "/api/:path*", "destination": "https://RENDER_URL_HERE/api/:path*" },
+    { "source": "/uploads/:path*", "destination": "https://RENDER_URL_HERE/uploads/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

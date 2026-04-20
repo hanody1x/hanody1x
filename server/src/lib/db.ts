@@ -1,16 +1,15 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "../schema/index.js";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const url = process.env.DATABASE_URL || "file:sqlite.db";
-const authToken = process.env.DATABASE_AUTH_TOKEN;
+const url = process.env.DATABASE_URL || "";
 
-const client = createClient({
-  url,
-  authToken,
-});
+if (!url) {
+  throw new Error("DATABASE_URL is missing in .env");
+}
 
+const client = postgres(url);
 export const db = drizzle(client, { schema });

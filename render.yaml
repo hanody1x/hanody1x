@@ -1,20 +1,33 @@
 services:
   - type: web
-    name: portfolio-creator
+    name: izaid-backend
     runtime: node
     plan: free
-    buildCommand: npm run build
-    startCommand: npm start
+    region: frankfurt
+    buildCommand: npm --prefix server install && npm --prefix server run build
+    startCommand: npm --prefix server run start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        sync: false
       - key: JWT_SECRET
-        generateValue: true
-      - key: PORT
-        value: 3001
-    # Note: SQLite and Uploads are ephemeral on the free tier.
-    # To persist data across redeploys, uncomment the lines below (requires paid Starter plan).
-    # disks:
-    #   - name: portfolio-data
-    #     mountPath: /opt/render/project/src/server/uploads
-    #     sizeGB: 1
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

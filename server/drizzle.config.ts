@@ -3,15 +3,17 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const urlWithAuth = process.env.DATABASE_AUTH_TOKEN 
-  ? `${process.env.DATABASE_URL}?authToken=${process.env.DATABASE_AUTH_TOKEN}`
-  : process.env.DATABASE_URL || "file:./sqlite.db";
+const url = process.env.DATABASE_URL;
+
+if (!url) {
+  throw new Error("DATABASE_URL is missing in .env");
+}
 
 export default defineConfig({
   schema: "./src/schema/index.ts",
   out: "./drizzle",
-  dialect: "sqlite",
+  dialect: "postgresql",
   dbCredentials: {
-    url: urlWithAuth,
+    url: url,
   },
 });

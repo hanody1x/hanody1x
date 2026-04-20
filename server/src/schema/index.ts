@@ -1,59 +1,58 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, text, integer, boolean, timestamp, serial } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
 import { sql } from "drizzle-orm";
 
-export const adminUsers = sqliteTable("admin_users", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const adminUsers = pgTable("admin_users", {
+  id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const siteContent = sqliteTable("site_content", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const siteContent = pgTable("site_content", {
+  id: serial("id").primaryKey(),
   section: text("section").notNull(),
   content: text("content").notNull().default("{}"),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const contactMessages = sqliteTable("contact_messages", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const contactMessages = pgTable("contact_messages", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
   service: text("service"),
   message: text("message").notNull(),
-  read: integer("read", { mode: "boolean" }).notNull().default(false),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  read: boolean("read").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertAdminSchema = createInsertSchema(adminUsers).omit({ id: true, createdAt: true });
 export const insertMessageSchema = createInsertSchema(contactMessages).omit({ id: true, read: true, createdAt: true });
 
-export const loginLogs = sqliteTable("login_logs", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const loginLogs = pgTable("login_logs", {
+  id: serial("id").primaryKey(),
   username: text("username").notNull(),
   ipAddress: text("ip_address"),
   deviceInfo: text("device_info"),
-  success: integer("success", { mode: "boolean" }).notNull(),
-  attemptedAt: integer("attempted_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  success: boolean("success").notNull(),
+  attemptedAt: timestamp("attempted_at").defaultNow().notNull(),
 });
 
-export const clients = sqliteTable("clients", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   status: text("status").notNull().default("جديد"), // e.g. "جديد", "حالي", "مكتمل"
   balance: integer("balance").notNull().default(0),
   ordersCompleted: integer("orders_completed").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const timeSessions = sqliteTable("time_sessions", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const timeSessions = pgTable("time_sessions", {
+  id: serial("id").primaryKey(),
   title: text("title").notNull().default("جلسة عمل بدون اسم"),
   durationSeconds: integer("duration_seconds").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertClientSchema = createInsertSchema(clients).omit({ id: true, createdAt: true, updatedAt: true });
